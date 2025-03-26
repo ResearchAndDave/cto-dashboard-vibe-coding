@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Projects Overview{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2 md:mb-0">Projects Overview</h2>
+
+        <div class="flex flex-wrap gap-2">
+            <span class="badge badge-success gap-1">
+                <span class="font-medium">{{ summary.on_track_count }}</span> On Track
+            </span>
+            <span class="badge badge-warning gap-1">
+                <span class="font-medium">{{ summary.at_risk_count }}</span> At Risk
+            </span>
+            <span class="badge badge-error gap-1">
+                <span class="font-medium">{{ summary.delayed_count }}</span> Delayed
+            </span>
+        </div>
+    </div>
+
+    <!-- Summary stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="stats shadow">
+            <div class="stat">
+                <div class="stat-title">Code Coverage</div>
+                <div class="stat-value text-primary">{{ "%.1f"|format(summary.avg_code_coverage) }}%</div>
+                <div class="stat-desc">Average across all projects</div>
+            </div>
+        </div>
+
+        <div class="stats shadow">
+            <div class="stat">
+                <div class="stat-title">Technical Debt Ratio</div>
+                <div class="stat-value text-secondary">{{ "%.1f"|format(summary.avg_technical_debt) }}%</div>
+                <div class="stat-desc">Average across all projects</div>
+            </div>
+        </div>
+
+        <div class="stats shadow">
+            <div class="stat">
+                <div class="stat-title">Critical Bugs</div>
+                <div class="stat-value text-error">{{ summary.critical_bugs_total }}</div>
+                <div class="stat-desc">Total across all projects</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project filters -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <div class="form-control">
+            <div class="input-group">
+                <input type="text" placeholder="Search projects..." class="input input-bordered"
+                    aria-label="Search projects" />
+                <button class="btn btn-square" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <select class="select select-bordered" aria-label="Filter by status">
+            <option disabled selected>Filter by status</option>
+            <option>All</option>
+            <option>On Track</option>
+            <option>At Risk</option>
+            <option>Delayed</option>
+        </select>
+
+        <select class="select select-bordered" aria-label="Sort by">
+            <option disabled selected>Sort by</option>
+            <option>Name</option>
+            <option>Status</option>
+            <option>End Date</option>
+        </select>
+    </div>
+</div>
+
+<!-- Projects grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for project in projects %}
+    {% include "components/project_card.html" %}
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add any dashboard-specific JavaScript here
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize event listeners
+
+        // Example: Filter projects based on status
+        const statusFilter = document.querySelector('select[aria-label="Filter by status"]');
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function () {
+                // Filter implementation would go here
+                console.log('Status filter changed:', this.value);
+            });
+        }
+    });
+</script>
+{% endblock %}

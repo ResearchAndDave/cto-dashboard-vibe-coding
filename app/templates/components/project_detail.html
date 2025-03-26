@@ -1,0 +1,229 @@
+<div class="p-2">
+    <h2 class="text-2xl font-bold mb-4" id="modal-title">{{ project.name }}</h2>
+
+    <!-- Project status and description -->
+    <div class="flex items-start gap-2 mb-4">
+        {% if project.status == "On Track" %}
+        <div class="badge badge-success">{{ project.status }}</div>
+        {% elif project.status == "At Risk" %}
+        <div class="badge badge-warning">{{ project.status }}</div>
+        {% elif project.status == "Delayed" %}
+        <div class="badge badge-error">{{ project.status }}</div>
+        {% else %}
+        <div class="badge">{{ project.status }}</div>
+        {% endif %}
+
+        <p class="text-gray-600">{{ project.description }}</p>
+    </div>
+
+    <!-- Project details -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="card bg-base-100 shadow-md">
+            <div class="card-body p-4">
+                <h3 class="card-title text-lg">Project Information</h3>
+
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <tbody>
+                            <tr>
+                                <td class="font-medium">Start Date</td>
+                                <td>{{ project.start_date }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Target End Date</td>
+                                <td>{{ project.target_end_date }}</td>
+                            </tr>
+                            {% if project.actual_end_date %}
+                            <tr>
+                                <td class="font-medium">Actual End Date</td>
+                                <td>{{ project.actual_end_date }}</td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <td class="font-medium">Tech Stack</td>
+                                <td>{{ project.tech_stack if project.tech_stack else "Not specified" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Team</td>
+                                <td>{{ project.team_composition if project.team_composition else
+                                    project.team_size|string + " members" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Last Updated</td>
+                                <td>{{ project.last_updated }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-md">
+            <div class="card-body p-4">
+                <h3 class="card-title text-lg">Key Metrics</h3>
+
+                {% if metrics %}
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <tbody>
+                            <tr>
+                                <td class="font-medium">Sprint Completion Rate</td>
+                                <td>{{ "%.1f"|format(metrics.sprint_completion_rate) }}%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Code Coverage</td>
+                                <td>{{ "%.1f"|format(metrics.code_coverage) }}%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Technical Debt Ratio</td>
+                                <td>{{ "%.1f"|format(metrics.technical_debt_ratio) }}%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Defect Escape Rate</td>
+                                <td>{{ "%.1f"|format(metrics.defect_escape_rate) }}%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Critical Bugs</td>
+                                <td>{{ metrics.critical_bugs_count }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">System Uptime</td>
+                                <td>{{ "%.2f"|format(metrics.system_uptime) }}%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Avg Response Time</td>
+                                <td>{{ metrics.avg_response_time }}ms</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Error Rate</td>
+                                <td>{{ "%.2f"|format(metrics.error_rate) }}%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Team Capacity</td>
+                                <td>{{ "%.1f"|format(metrics.team_capacity_utilization) }}%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Innovation Score</td>
+                                <td>{{ "%.1f"|format(metrics.innovation_score) }}/10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        class="stroke-current shrink-0 w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>No metrics data available for this project.</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sprint Velocity Chart -->
+    {% if velocity %}
+    <div class="card bg-base-100 shadow-md mb-6">
+        <div class="card-body p-4">
+            <h3 class="card-title text-lg">Sprint Velocity</h3>
+
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>Sprint</th>
+                            <th>Planned Points</th>
+                            <th>Completed Points</th>
+                            <th>Completion %</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sprint in velocity %}
+                        <tr>
+                            <td>Sprint {{ sprint.sprint_number }}</td>
+                            <td>{{ sprint.planned_points }}</td>
+                            <td>{{ sprint.completed_points }}</td>
+                            <td>{{ "%.1f"|format(sprint.completed_points / sprint.planned_points * 100) }}%</td>
+                            <td>{{ sprint.sprint_start_date }}</td>
+                            <td>{{ sprint.sprint_end_date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Visual representation of velocity -->
+            <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                <div class="text-sm font-medium mb-2">Velocity Trend</div>
+                <div class="flex items-end h-32 gap-1">
+                    {% for sprint in velocity %}
+                    <div class="flex flex-col items-center">
+                        <div class="text-xs text-gray-500 mb-1">{{ sprint.sprint_number }}</div>
+
+                        <!-- Planned bar -->
+                        <div class="w-8 bg-gray-300 relative" style="height: {{ sprint.planned_points / 40 * 100 }}%;"
+                            aria-label="Sprint {{ sprint.sprint_number }} planned: {{ sprint.planned_points }} points">
+                        </div>
+
+                        <!-- Completed bar -->
+                        <div class="w-8 bg-blue-500 mt-1 relative"
+                            style="height: {{ sprint.completed_points / 40 * 100 }}%;"
+                            aria-label="Sprint {{ sprint.sprint_number }} completed: {{ sprint.completed_points }} points">
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="flex justify-between mt-2">
+                    <div class="text-xs text-gray-500">
+                        <span class="inline-block w-3 h-3 bg-gray-300 mr-1"></span>Planned
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <span class="inline-block w-3 h-3 bg-blue-500 mr-1"></span>Completed
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recommendations section -->
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body p-4">
+            <h3 class="card-title text-lg">Recommendations</h3>
+
+            <div class="mt-2">
+                <ul class="list-disc pl-5 space-y-2">
+                    {% if metrics and metrics.technical_debt_ratio > 15 %}
+                    <li>Technical debt is above threshold (15%). Consider allocating more time for refactoring.</li>
+                    {% endif %}
+
+                    {% if metrics and metrics.code_coverage < 80 %} <li>Code coverage is below target (80%). Improve
+                        test coverage to reduce potential defects.</li>
+                        {% endif %}
+
+                        {% if metrics and metrics.critical_bugs_count > 3 %}
+                        <li>Critical bugs count ({{ metrics.critical_bugs_count }}) is high. Prioritize fixing these
+                            issues.</li>
+                        {% endif %}
+
+                        {% if metrics and metrics.team_capacity_utilization > 90 %}
+                        <li>Team capacity utilization is very high ({{ "%.1f"|format(metrics.team_capacity_utilization)
+                            }}%). Team may be at risk of burnout.</li>
+                        {% endif %}
+
+                        {% if metrics and metrics.system_uptime < 99.5 %} <li>System uptime is below SLA (99.5%).
+                            Investigate reliability issues.</li>
+                            {% endif %}
+
+                            {% if not metrics or not velocity %}
+                            <li>Some metrics are missing. Ensure proper tracking is set up for this project.</li>
+                            {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

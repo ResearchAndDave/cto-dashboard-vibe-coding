@@ -1,0 +1,96 @@
+<div class="card bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+    <!-- Card header with project name and status -->
+    <div class="card-body p-4 gap-2">
+        <div class="flex justify-between items-start">
+            <div>
+                <h3 class="card-title text-lg font-bold text-gray-800">{{ project.name }}</h3>
+                <p class="text-sm text-gray-500">{{ project.description }}</p>
+            </div>
+
+            {% if project.status == "On Track" %}
+            <div class="badge badge-success">{{ project.status }}</div>
+            {% elif project.status == "At Risk" %}
+            <div class="badge badge-warning">{{ project.status }}</div>
+            {% elif project.status == "Delayed" %}
+            <div class="badge badge-error">{{ project.status }}</div>
+            {% else %}
+            <div class="badge">{{ project.status }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Timeline visualization would go here -->
+        <div class="mt-2 bg-gray-100 p-2 rounded-md">
+            <div class="text-xs text-gray-500 mb-1">Timeline</div>
+            <div class="relative h-4 bg-gray-200 rounded">
+                {% set now = now | default(project.start_date) %}
+                {% set total_days = (project.target_end_date - project.start_date).days %}
+                {% set elapsed_days = (now - project.start_date).days %}
+                {% set progress_percent = (elapsed_days / total_days * 100) if total_days > 0 else 0 %}
+                {% set progress = progress_percent|default(0) %}
+                <div class="absolute top-0 left-0 h-full bg-blue-500 rounded" style="width: {{ progress_percent }}%;"
+                    aria-label="Project progress: {{ progress_percent | round }}%" role="progressbar"
+                    aria-valuenow="{{ progress_percent | round }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>{{ project.start_date }}</span>
+                <span>{{ project.target_end_date }}</span>
+            </div>
+        </div>
+
+        <!-- Key metrics -->
+        <div class="grid grid-cols-2 gap-2 mt-2">
+            <div class="bg-gray-100 p-2 rounded-md">
+                <div class="text-xs text-gray-500">Code Coverage</div>
+                <div class="font-medium">{{ "%.1f"|format(project.metrics.code_coverage) if project.metrics else "N/A"
+                    }}%</div>
+            </div>
+
+            <div class="bg-gray-100 p-2 rounded-md">
+                <div class="text-xs text-gray-500">Tech Debt</div>
+                <div class="font-medium">{{ "%.1f"|format(project.metrics.technical_debt_ratio) if project.metrics else
+                    "N/A" }}%</div>
+            </div>
+
+            <div class="bg-gray-100 p-2 rounded-md">
+                <div class="text-xs text-gray-500">Critical Bugs</div>
+                <div class="font-medium">{{ project.metrics.critical_bugs_count if project.metrics else "N/A" }}</div>
+            </div>
+
+            <div class="bg-gray-100 p-2 rounded-md">
+                <div class="text-xs text-gray-500">Team Utilization</div>
+                <div class="font-medium">{{ "%.1f"|format(project.metrics.team_capacity_utilization) if project.metrics
+                    else "N/A" }}%</div>
+            </div>
+        </div>
+
+        <!-- Team and tech stack info -->
+        <div class="flex justify-between items-center mt-2 text-sm text-gray-600">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <span>{{ project.team_composition if project.team_composition else project.team_size|string + " members"
+                    }}</span>
+            </div>
+
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span>{{ project.tech_stack if project.tech_stack else "Not specified" }}</span>
+            </div>
+        </div>
+
+        <!-- View details button -->
+        <div class="card-actions justify-end mt-3">
+            <button class="btn btn-sm btn-primary" hx-get="/components/project_detail/{{ project.id }}"
+                hx-target="#modal-content" aria-label="View details for {{ project.name }}">
+                View Details
+            </button>
+        </div>
+    </div>
+</div>

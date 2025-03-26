@@ -1,0 +1,90 @@
+/* Custom styles for the CTO Dashboard */
+
+/* Accessibility enhancements */
+:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #1e40af;
+    color: white;
+    padding: 8px;
+    z-index: 100;
+    transition: top 0.2s;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Project card hover effects */
+.project-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Status badge custom colors */
+.status-on-track {
+    background-color: #10b981;
+    color: white;
+}
+
+.status-at-risk {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.status-delayed {
+    background-color: #ef4444;
+    color: white;
+}
+
+/* Custom chart styles */
+.chart-container {
+    height: 200px;
+    width: 100%;
+}
+
+/* Better contrast for accessibility */
+.text-muted {
+    color: #4b5563;
+}
+
+/* Loading indicator for HTMX requests */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none;
+    }
+
+    .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    body {
+        background-color: white !important;
+    }
+}
